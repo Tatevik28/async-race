@@ -50,7 +50,7 @@
           <button class="btn btn-sm btn-outline-info m-1" (click)="updateCarStatus(car.id,'started')">A</button>
           <button class="btn btn-sm btn-outline-info m-1" (click)="updateCarStatus(car.id,'stopped')">B</button>
         </div>
-        <span >
+        <span class="car">
           <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="150" height="70" viewBox="0 0 256 256" xml:space="preserve">
           <defs>
           </defs>
@@ -67,4 +67,10 @@
     </tr>
     </tbody>
   </table>
+  <mat-paginator [showFirstLastButtons]="true"
+                 [pageSize]="7"
+                 [length]="totalCountOfPages"
+                 (page)="changePage($event)"
+                 [style.background-color]="'#819987'"
+  ></mat-paginator>
 </div>

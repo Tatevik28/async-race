@@ -10,6 +10,8 @@ import {CarService} from "./services/car.service";
 import {WinnersService} from "./services/winners.service";
 import {HttpClientModule} from "@angular/common/http";
 import {CommonModule} from "@angular/common";
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import {MatPaginatorModule} from '@angular/material/paginator';
 
 @NgModule({
   declarations: [
@@ -22,9 +24,10 @@ import {CommonModule} from "@angular/common";
     AppRoutingModule,
     FormsModule,
     CommonModule,
-    HttpClientModule
+    HttpClientModule,
+    MatPaginatorModule
   ],
-  providers: [CarService, WinnersService],
+  providers: [CarService, WinnersService, provideAnimationsAsync()],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -6,7 +6,7 @@ import {WinnersComponent} from "./winners/winners.component";
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/home',
+    redirectTo: '/garage',
     pathMatch: 'full'
   },
   {

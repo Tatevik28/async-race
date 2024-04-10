@@ -10,6 +10,8 @@ import {Car, CarStatus} from "../interfaces/IGarage";
 export class GarageComponent implements OnInit{
   public cars: Car[] = [];
   public selectedCar: Car | undefined = undefined;
+  public totalCountOfPages: number = 0;
+  private pageNumber: number = 1;
 
   @ViewChild('createForm') createForm: any;
   @ViewChild('updateForm') updateForm: any;
@@ -18,18 +20,29 @@ export class GarageComponent implements OnInit{
 
 
   ngOnInit() {
-    this.carService.getCars().subscribe((res) => {
-      this.cars = res;
-    })
+    this.getCars(this.pageNumber);
+  }
+
+  changePage(event: any) {
+    this.pageNumber = event.pageIndex + 1;
+    this.getCars(this.pageNumber);
   }
 
   selectCar(car: Car) {
     this.selectedCar = car;
   }
 
+  getCars(pageNumber: number) {
+    this.carService.getCars(pageNumber).subscribe((res) => {
+      this.totalCountOfPages = Number(res.headers.get('X-Total-Count'))
+      this.cars = res.body as Car[];
+    })
+  }
+
   createCar() {
     this.carService.createCar(this.createForm.value).subscribe((res) => {
-      this.cars.unshift(res)
+      this.getCars(this.pageNumber)
+      this.createForm.reset();
     });
   }
 
@@ -50,6 +63,7 @@ export class GarageComponent implements OnInit{
       this.cars.forEach(car => {
         if (car.id === this.selectedCar?.id) {
           car = Object.assign(car, res);
+          this.updateForm.reset()
         }
       });
     });
@@ -58,7 +72,7 @@ export class GarageComponent implements OnInit{
   deleteCar(id: number | undefined) {
     this.carService.deleteCar(id as number).subscribe(
       (res) => {
-        this.cars = this.cars.filter(car => car.id !== id)
+        this.getCars(this.pageNumber);
       }
     )
   }
