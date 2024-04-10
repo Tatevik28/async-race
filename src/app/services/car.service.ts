@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Car, CarEngine, CarStatus} from "../interfaces/IGarage";
+import {environment} from "../../environment";
 
 @Injectable({
   providedIn: 'root'
@@ -13,17 +14,17 @@ export class CarService {
   public getCars(): Observable<Car[]> {
     let httpParams = new HttpParams();
     httpParams = httpParams.append("_page", 1);
-    return this.httpClient.get<Car[]>('/garage', {
+    return this.httpClient.get<Car[]>(`${environment.API_URL}/garage`, {
       params: httpParams
     })
   }
 
   public getCar(id: number): Observable<Car> {
-    return this.httpClient.get<Car>(`/garage:${id}`)
+    return this.httpClient.get<Car>(`/garage/${id}`)
   }
 
   public createCar(data: Car): Observable<Car> {
-    return this.httpClient.post<Car>(`/garage`, data, {
+    return this.httpClient.post<Car>(`${environment.API_URL}/garage`, data, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -31,11 +32,15 @@ export class CarService {
   }
 
   public deleteCar(id: number): Observable<Car> {
-    return this.httpClient.delete<Car>(`/garage:${id}`)
+    return this.httpClient.delete<Car>(`${environment.API_URL}/garage/${id}`)
   }
 
   public updateCar(id: number, data: Omit<Car, 'id'>): Observable<Car> {
-    return this.httpClient.put<Car>(`/garage:${id}`, data)
+    return this.httpClient.put<Car>(`${environment.API_URL}/garage/${id}`, data, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
   }
 
   public updateCarStatus(id: number, status: CarStatus): Observable<CarEngine> {

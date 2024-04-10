@@ -22,7 +22,7 @@ export class WinnersService {
   }
 
   public getWinner(id: number): Observable<Winner> {
-    return this.httpClient.get<Winner>(`/winners:${id}`)
+    return this.httpClient.get<Winner>(`/winners/${id}`)
   }
 
   public createWinner(data: Winner): Observable<Winner> {
@@ -34,11 +34,11 @@ export class WinnersService {
   }
 
   public deleteWinner(id: number): Observable<Winner> {
-    return this.httpClient.delete<Winner>(`/winners:${id}`)
+    return this.httpClient.delete<Winner>(`/winners/${id}`)
   }
 
   public updateWinner(id: number, data: Omit<Winner, "id">): Observable<Winner> {
-    return this.httpClient.put<Winner>(`/winners:${id}`, data)
+    return this.httpClient.put<Winner>(`/winners/${id}`, data)
   }
 
 }
