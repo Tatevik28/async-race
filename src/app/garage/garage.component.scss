@@ -1,0 +1,11 @@
+.car {
+  animation-name: drive;
+  animation-duration: 4s;
+  animation-fill-mode: forwards;
+  position: absolute;
+}
+
+@keyframes drive {
+  from { left: 15%; }
+  to { left: 80%; }
+}

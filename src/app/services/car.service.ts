@@ -48,7 +48,7 @@ export class CarService {
     httpParams = httpParams.append("id", id);
     httpParams = httpParams.append("status", status);
 
-    return this.httpClient.patch<CarEngine>('/engine', {
+    return this.httpClient.patch<CarEngine>(`${environment.API_URL}/engine`, {},{
       params: httpParams
     })
   }

@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {CarService} from "../services/car.service";
-import {Car} from "../interfaces/IGarage";
+import {Car, CarStatus} from "../interfaces/IGarage";
 
 @Component({
   selector: 'app-garage',
@@ -61,5 +61,9 @@ export class GarageComponent implements OnInit{
         this.cars = this.cars.filter(car => car.id !== id)
       }
     )
+  }
+
+  updateCarStatus(id: number | undefined, status: CarStatus) {
+    this.carService.updateCarStatus(id as number, status).subscribe();
   }
 }
