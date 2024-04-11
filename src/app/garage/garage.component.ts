@@ -1,6 +1,8 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {CarService} from "../services/car.service";
-import {Car, CarStatus} from "../interfaces/IGarage";
+import {Car, CarEngine, CarStatus} from "../interfaces/IGarage";
+import {catchError, forkJoin, Observable, of, switchMap, tap} from "rxjs";
+import {WinnersService} from "../services/winners.service";
 
 @Component({
   selector: 'app-garage',
@@ -15,8 +17,10 @@ export class GarageComponent implements OnInit{
 
   @ViewChild('createForm') createForm: any;
   @ViewChild('updateForm') updateForm: any;
-  constructor(private carService: CarService) {
-  }
+  constructor(
+        private carService: CarService,
+        private winnersService: WinnersService)
+  {}
 
 
   ngOnInit() {
@@ -77,7 +81,68 @@ export class GarageComponent implements OnInit{
     )
   }
 
-  updateCarStatus(id: number | undefined, status: CarStatus) {
-    this.carService.updateCarStatus(id as number, status).subscribe();
+  stopDriving() {
+    this.cars.forEach(car => {
+      this.updateCarStatus(car.id, 'stopped').subscribe();
+    })
+  }
+
+  startDriving() {
+    const observables: Observable<any>[] = [];
+    const successfulCars: any[] = [];
+
+    this.cars.forEach(car => {
+      const carUpdateObservable = this.updateCarStatus(car.id, 'started');
+
+      const driveObservable = carUpdateObservable.pipe(
+        switchMap(engine => {
+          const id = car.id;
+          return this.carService.updateCarStatus(id as number, 'drive').pipe(
+            tap(() => successfulCars.push({ id, ...engine })),
+            catchError(error => {
+              console.error(`Error updating car status for car ${id} during 'drive' operation:`, error);
+              return of(null);
+            })
+          );
+        }),
+      );
+
+      observables.push(driveObservable);
+    });
+
+    forkJoin(observables).subscribe(() => {
+      let carSpeed = 0;
+      let car: CarEngine = {} as CarEngine;
+      successfulCars.forEach(successfulCar => {
+        if (successfulCar.velocity > carSpeed) {
+          carSpeed = successfulCar.velocity;
+          car = successfulCar
+        }
+      })
+      this.createOrUpdateWinner(car as CarEngine)
+    });
+  }
+
+  updateCarStatus(id: number | undefined, status: CarStatus): Observable<any> {
+    return this.carService.updateCarStatus(id as number, status);
+  }
+
+  createOrUpdateWinner(car: CarEngine) {
+    let winnerExists;
+    this.winnersService.getWinners().subscribe((res) => {
+      winnerExists = res.find(winner => winner.id === car.id)
+      if (winnerExists) {
+        this.winnersService.updateWinner(car.id as number, {
+          wins: 1,
+          time: car.velocity
+        }).subscribe()
+      } else {
+        this.winnersService.createWinner({
+          id: car.id as number,
+          wins: 1,
+          time: car.velocity
+        }).subscribe()
+      }
+    })
   }
 }

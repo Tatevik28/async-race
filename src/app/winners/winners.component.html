@@ -1,1 +1,28 @@
-<p>winners works!</p>
+<div class="container">
+  <table class="table">
+    <thead>
+    <tr>
+      <th>N</th>
+      <th>CAR</th>
+      <th>NAME</th>
+      <th>WINS</th>
+      <th>BEST TIME(SECONDS)</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let winner of winners">
+      <td>{{winner.id}}</td>
+      <td>{{winner.id}}</td>
+      <td>{{winner.id}}</td>
+      <td>{{winner.wins}}</td>
+      <td>{{winner.time}}</td>
+    </tr>
+    </tbody>
+  </table>
+<!--<mat-paginator [showFirstLastButtons]="true"-->
+<!--               [pageSize]="7"-->
+<!--               [length]="totalCountOfPages"-->
+<!--               (page)="changePage($event)"-->
+<!--               [style.background-color]="'#819987'"-->
+<!--&gt;</mat-paginator>-->
+</div>

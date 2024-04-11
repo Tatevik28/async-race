@@ -4,9 +4,10 @@ export interface Car {
   id?: number
 }
 
-export type CarStatus = "started" | "stopped"
+export type CarStatus = "started" | "stopped" | "drive"
 
 export interface CarEngine {
   velocity: number,
-  distance: number
+  distance: number,
+  id?: number
 }
