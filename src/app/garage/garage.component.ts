@@ -13,7 +13,9 @@ export class GarageComponent implements OnInit{
   public cars: Car[] = [];
   public selectedCar: Car | undefined = undefined;
   public totalCountOfPages: number = 0;
+  public driving: boolean = false;
   private pageNumber: number = 1;
+
 
   @ViewChild('createForm') createForm: any;
   @ViewChild('updateForm') updateForm: any;
@@ -81,13 +83,37 @@ export class GarageComponent implements OnInit{
     )
   }
 
-  stopDriving() {
-    this.cars.forEach(car => {
-      this.updateCarStatus(car.id, 'stopped').subscribe();
+  generateCars() {
+    this.getCars(this.pageNumber);
+  }
+
+  startDriving(car: Car) {
+    this.updateCarStatus(car.id, 'started').subscribe(() => {
+      car.driving = true;
+      this.updateCarStatus(car.id, 'drive').subscribe(() => {
+      }, (err) => {
+        car.driving = false;
+      });
     })
   }
 
-  startDriving() {
+  stopDriving(car: Car) {
+    this.updateCarStatus(car.id, 'stopped').subscribe(() => {
+      car.driving = false;
+    });
+  }
+
+  stopGroupDriving() {
+    this.driving = false;
+    this.cars.forEach(car => {
+      this.updateCarStatus(car.id, 'stopped').subscribe(() => {
+        car.driving = false;
+      });
+    })
+  }
+
+  startGroupDriving() {
+    this.driving = true;
     const observables: Observable<any>[] = [];
     const successfulCars: any[] = [];
 
@@ -96,10 +122,14 @@ export class GarageComponent implements OnInit{
 
       const driveObservable = carUpdateObservable.pipe(
         switchMap(engine => {
+          car.driving = true;
           const id = car.id;
           return this.carService.updateCarStatus(id as number, 'drive').pipe(
-            tap(() => successfulCars.push({ id, ...engine })),
+            tap(() => {
+              successfulCars.push({ id, ...engine })
+            }),
             catchError(error => {
+              car.driving = false;
               console.error(`Error updating car status for car ${id} during 'drive' operation:`, error);
               return of(null);
             })
@@ -128,21 +158,20 @@ export class GarageComponent implements OnInit{
   }
 
   createOrUpdateWinner(car: CarEngine) {
-    let winnerExists;
-    this.winnersService.getWinners().subscribe((res) => {
-      winnerExists = res.find(winner => winner.id === car.id)
-      if (winnerExists) {
+    this.winnersService.getWinner(car.id as number).subscribe((winner) => {
         this.winnersService.updateWinner(car.id as number, {
-          wins: 1,
-          time: car.velocity
+          wins: winner.wins + 1,
+          time: Math.floor(car.distance / car.velocity)
         }).subscribe()
-      } else {
+
+    },
+      (err) => {
         this.winnersService.createWinner({
           id: car.id as number,
           wins: 1,
-          time: car.velocity
+          time: Math.floor(car.distance / car.velocity)
         }).subscribe()
-      }
-    })
+      })
+      window.alert(`Winner id is ${car.id}, time is ${Math.floor(car.distance / car.velocity)}`)
   }
 }

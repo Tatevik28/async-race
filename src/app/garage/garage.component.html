@@ -1,8 +1,8 @@
 <div class="container">
   <div class="d-flex justify-content-between align-items-center">
     <div>
-      <button class="btn btn-success m-1" (click)="startDriving()">Race</button>
-      <button class="btn btn-secondary" (click)="stopDriving()">Reset</button>
+      <button class="btn btn-success m-1" (click)="startGroupDriving()">Race</button>
+      <button class="btn btn-secondary" [disabled]="!driving" (click)="stopGroupDriving()">Reset</button>
     </div>
     <form #createForm="ngForm" class="form-group d-flex align-items-center justify-content-between" (ngSubmit)="createCar()">
       <input type="text" placeholder="TYPE CAR BRAND"
@@ -30,8 +30,9 @@
              #color="ngModel"
              class="m-1"
              type="color">
-      <button class="btn btn-secondary">UPDATE</button>
+      <button class="btn btn-secondary" [disabled]="!selectedCar">UPDATE</button>
     </form>
+    <button class="btn btn-secondary" (click)="generateCars()">GENERATE CARS</button>
   </div>
   <table class="table">
     <thead>
@@ -42,19 +43,19 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let car of cars">
-      <td class="d-flex justify-content-sm-between align-items-center col-2 col-md-1">
-        <div class="d-flex flex-sm-column">
+    <tr *ngFor="let car of cars" class="border-bottom">
+      <td class="d-flex justify-content-between align-items-center col-2 col-md-1 border-bottom-0">
+        <div class="d-flex flex-column">
           <button class="btn btn-sm btn-outline-primary m-1" [ngClass]="car.id === selectedCar?.id ? 'active' : ''"
                   (click)="selectCar(car)">Select</button>
           <button class="btn btn-sm btn-danger m-1"
                   (click)="deleteCar(car.id)">Remove</button>
         </div>
-        <div class="d-flex flex-sm-column justify-content-sm-between">
-          <button class="btn btn-sm btn-outline-info m-1" (click)="updateCarStatus(car.id,'started')">A</button>
-          <button class="btn btn-sm btn-outline-info m-1" (click)="updateCarStatus(car.id,'stopped')">B</button>
+        <div class="d-flex flex-column justify-content-between">
+          <button class="btn btn-sm btn-outline-info m-1" [disabled]="car.driving" (click)="startDriving(car)">A</button>
+          <button class="btn btn-sm btn-outline-info m-1" [disabled]="!car.driving" (click)="stopDriving(car)">B</button>
         </div>
-        <span class="car">
+        <span [ngClass]="car.driving ? 'car' : ''">
           <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="150" height="70" viewBox="0 0 256 256" xml:space="preserve">
           <defs>
           </defs>
@@ -66,8 +67,8 @@
           </svg>
         </span>
       </td>
-      <td class="col-8">{{car.name}}</td>
-      <td class="col-2"></td>
+      <td class="col-8 align-content-center">{{car.name}}</td>
+      <td class="col-2 align-content-center"></td>
     </tr>
     </tbody>
   </table>

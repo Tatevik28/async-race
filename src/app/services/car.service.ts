@@ -22,7 +22,7 @@ export class CarService {
   }
 
   public getCar(id: number): Observable<Car> {
-    return this.httpClient.get<Car>(`/garage/${id}`)
+    return this.httpClient.get<Car>(`${environment.API_URL}/garage/${id}`)
   }
 
   public createCar(data: Car): Observable<Car> {

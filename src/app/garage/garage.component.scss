@@ -6,6 +6,13 @@
 }
 
 @keyframes drive {
-  from { left: 15%; }
+  from { left: 20%; }
   to { left: 80%; }
+}
+
+@media(max-width: 992px) {
+  @keyframes drive {
+    from { left: 50%; }
+    to { left: 80%; }
+  }
 }

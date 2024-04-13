@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpParams, HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Winner} from "../interfaces/IWinners";
 import {environment} from "../../environment";
@@ -11,14 +11,15 @@ export class WinnersService {
 
   constructor(private httpClient: HttpClient) { }
 
-  public getWinners(): Observable<Winner[]> {
+  public getWinners(pageNumber: number): Observable<HttpResponse<Winner[]>> {
     let httpParams = new HttpParams();
-    httpParams = httpParams.append("_page", 1);
+    httpParams = httpParams.append("_page", pageNumber);
     httpParams = httpParams.append("_limit", 7);
     httpParams = httpParams.append("_sort", 'id');
     httpParams = httpParams.append("_order", 'asc');
     return this.httpClient.get<Winner[]>(`${environment.API_URL}/winners`, {
-      params: httpParams
+      params: httpParams,
+      observe: 'response'
     })
   }
 
