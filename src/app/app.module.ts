@@ -8,10 +8,11 @@ import {GarageComponent} from './garage/garage.component';
 import {WinnersComponent} from './winners/winners.component';
 import {CarService} from "./services/car.service";
 import {WinnersService} from "./services/winners.service";
-import {HttpClientModule} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {CommonModule} from "@angular/common";
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import {MatPaginatorModule} from '@angular/material/paginator';
+import {ErrorInterceptorService} from "./error-interceptor.service";
 
 @NgModule({
   declarations: [
@@ -27,7 +28,7 @@ import {MatPaginatorModule} from '@angular/material/paginator';
     HttpClientModule,
     MatPaginatorModule
   ],
-  providers: [CarService, WinnersService, provideAnimationsAsync()],
+  providers: [CarService, WinnersService, provideAnimationsAsync(), {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptorService, multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

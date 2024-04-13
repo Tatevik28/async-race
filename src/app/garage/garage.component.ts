@@ -130,7 +130,6 @@ export class GarageComponent implements OnInit{
             }),
             catchError(error => {
               car.driving = false;
-              console.error(`Error updating car status for car ${id} during 'drive' operation:`, error);
               return of(null);
             })
           );
